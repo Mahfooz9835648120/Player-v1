@@ -1,0 +1,83 @@
+/**
+ * Audio Visualizer — Canvas-based frequency bars using Web Audio API analyser.
+ */
+import { getState } from '../utils/state.js';
+
+let canvas, ctx, analyser;
+let animId = null;
+
+export function initVisualizer(analyserNode) {
+  canvas  = document.getElementById('visualizer');
+  analyser = analyserNode;
+  if (!canvas || !analyser) return;
+
+  ctx = canvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+
+  // Start drawing
+  if (animId) cancelAnimationFrame(animId);
+  draw();
+}
+
+function resizeCanvas() {
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width  = canvas.offsetWidth  * dpr;
+  canvas.height = canvas.offsetHeight * dpr;
+  ctx?.scale(dpr, dpr);
+}
+
+function draw() {
+  animId = requestAnimationFrame(draw);
+  if (!ctx || !analyser) return;
+
+  const W = canvas.offsetWidth;
+  const H = canvas.offsetHeight;
+  const bufLen = analyser.frequencyBinCount;
+  const dataArr = new Uint8Array(bufLen);
+  analyser.getByteFrequencyData(dataArr);
+
+  ctx.clearRect(0, 0, W, H);
+
+  const isPlaying = getState('music.isPlaying');
+  const barCount  = getState('perf.isLowEnd') ? 24 : 48;
+  const step      = Math.floor(bufLen / barCount);
+  const barW      = (W / barCount) - 1;
+
+  for (let i = 0; i < barCount; i++) {
+    const value = dataArr[i * step] / 255;
+    const barH  = value * H * 0.9;
+
+    // Gradient from white to dim gray
+    const alpha = isPlaying ? (0.3 + value * 0.7) : 0.08;
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+
+    const x = i * (barW + 1);
+    const y = H - barH;
+
+    // Rounded top bars
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, barH, [2, 2, 0, 0]);
+    ctx.fill();
+  }
+
+  // Reflection
+  ctx.globalAlpha = 0.12;
+  ctx.scale(1, -1);
+  ctx.translate(0, -H);
+  for (let i = 0; i < barCount; i++) {
+    const value = dataArr[i * step] / 255;
+    const barH  = value * H * 0.3;
+    const x = i * (barW + 1);
+    const y = H - barH;
+    ctx.fillStyle = `rgba(255,255,255,${0.2 + value * 0.4})`;
+    ctx.fillRect(x, y, barW, barH);
+  }
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1;
+}
+
+export function stopVisualizer() {
+  if (animId) { cancelAnimationFrame(animId); animId = null; }
+}
