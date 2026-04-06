@@ -84,6 +84,9 @@ app.get('/api/content/:id', (req, res) => {
 if (isProd) {
   const distPath = path.join(__dirname, '..', 'dist');
   app.use(express.static(distPath));
+  app.get(['/admin', '/admin.html'], (req, res) => {
+    res.sendFile(path.join(distPath, 'admin.html'));
+  });
   app.get('*', (req, res) => {
     if (!req.path.startsWith('/api') && !req.path.startsWith('/ws')) {
       res.sendFile(path.join(distPath, 'index.html'));
