@@ -17,13 +17,7 @@ export async function getAdminVideos() {
 
 export async function saveAdminVideos(videos) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
-  for (const video of videos) {
-    await fetch('/api/admin/videos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(video),
-    }).catch(() => {});
-  }
+  return videos;
 }
 
 export async function addAdminVideo(video) {
@@ -43,4 +37,5 @@ export async function removeAdminVideo(id) {
   await fetch(`/api/admin/videos/${id}`, { method: 'DELETE' }).catch(() => {});
   const videos = (await getAdminVideos()).filter(v => v.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
+  return videos;
 }
