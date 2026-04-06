@@ -22,7 +22,8 @@ export function initMusicPlayer() {
   audio.addEventListener('timeupdate', onTimeUpdate);
   audio.addEventListener('loadedmetadata', () => {
     setState('music.duration', audio.duration);
-    document.getElementById('music-duration')?.textContent = formatTime(audio.duration);
+    const durEl = document.getElementById('music-duration');
+    if (durEl) durEl.textContent = formatTime(audio.duration);
     updateAlbumRing(true);
   });
 
@@ -88,8 +89,10 @@ export function loadTrack(index) {
   const track = playlist[index];
   audio.src = track.src;
 
-  document.getElementById('track-title')?.textContent = track.title;
-  document.getElementById('track-artist')?.textContent = track.artist;
+  const trackTitleEl = document.getElementById('track-title');
+  const trackArtistEl = document.getElementById('track-artist');
+  if (trackTitleEl) trackTitleEl.textContent = track.title;
+  if (trackArtistEl) trackArtistEl.textContent = track.artist;
 
   const artEl = document.getElementById('album-art');
   if (artEl) {

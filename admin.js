@@ -72,10 +72,14 @@ loginForm?.addEventListener('submit', (e) => {
   e.preventDefault();
   const id = adminIdInput.value.trim();
   const pass = adminPassInput.value;
+  const errEl = document.getElementById('login-error');
   if (id === ADMIN_ID && pass === ADMIN_PASS) {
+    if (errEl) errEl.style.display = 'none';
     setAuthed();
   } else {
-    alert('Invalid admin ID or password');
+    if (errEl) { errEl.textContent = 'Wrong ID or password. Try again.'; errEl.style.display = 'block'; }
+    if (adminPassInput) adminPassInput.value = '';
+    adminPassInput?.focus();
   }
 });
 
