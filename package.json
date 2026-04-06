@@ -4,11 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"node server/server.js\" --names \"vite,server\" --prefix-colors \"cyan,yellow\"",
+    "dev": "concurrently \"vite\" \"node server/server.js\"",
     "dev:frontend": "vite",
     "dev:backend": "node server/server.js",
     "build": "node scripts/build-static.mjs",
-    "start": "NODE_ENV=production node server/server.js",
+    "start": "node server/server.js",
     "preview": "vite preview"
   },
   "dependencies": {
