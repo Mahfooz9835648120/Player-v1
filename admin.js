@@ -1,4 +1,4 @@
-import { getFormatLabel } from './modules/video/player.js';
+import { getFormatLabel, detectStreamFormat } from './modules/video/player.js';
 import { addAdminVideo, getAdminVideos, removeAdminVideo } from './modules/video/admin.js';
 
 const ADMIN_ID = 'mahfoooozzzz';
@@ -80,7 +80,7 @@ loginForm?.addEventListener('submit', (e) => {
 });
 
 detectBtn?.addEventListener('click', updateFormat);
-urlInput?.addEventListener('blur', updateFormat);
+urlInput?.addEventListener('input', updateFormat);
 form?.addEventListener('submit', (e) => {
   e.preventDefault();
   if (!isAuthed()) return;

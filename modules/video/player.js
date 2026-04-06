@@ -105,8 +105,14 @@ function isProbablyVideoPage(url) {
   return lower.includes('youtube.com/watch') || lower.includes('youtu.be/') || lower.includes('vimeo.com/') || lower.includes('dailymotion.com/') || lower.includes('twitch.tv/') || lower.includes('facebook.com/watch');
 }
 
+function isPlayableDirect(url) {
+  const lower = url.toLowerCase().split('?')[0];
+  return lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.ogv') || lower.endsWith('.ogg') || lower.endsWith('.mov') || lower.endsWith('.mkv') || lower.endsWith('.avi') || lower.endsWith('.flv') || lower.endsWith('.m3u8') || lower.endsWith('.mpd');
+}
+
 async function tryDirect(url) {
   if (isProbablyVideoPage(url)) return false;
+  if (!isPlayableDirect(url)) return false;
   video.src = url;
   try {
     await video.play();
