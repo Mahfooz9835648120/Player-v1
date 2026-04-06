@@ -85,7 +85,7 @@ if (isProd) {
   const distPath = path.join(__dirname, '..', 'dist');
   app.use(express.static(distPath));
   app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api') && !req.path.startsWith('/ws') && !req.path.startsWith('/admin')) {
+    if (!req.path.startsWith('/api') && !req.path.startsWith('/ws')) {
       res.sendFile(path.join(distPath, 'index.html'));
     }
   });
